@@ -1,0 +1,8 @@
+version = rootProject.version
+
+dependencies {
+    api 'com.h2database:h2:1.4.200'
+}
+
+publishing.publications.binary.version = "${version}"
+publishing.publications.snapshot.version = "${version}-SNAPSHOT"

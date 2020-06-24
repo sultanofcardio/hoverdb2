@@ -1,0 +1,164 @@
+buildscript {
+    ext.kotlin_version = '1.3.72'
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "$kotlin_version" apply false
+}
+
+version '1.0.0'
+
+allprojects {
+
+    group 'com.sultanofcardio'
+
+    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
+    apply plugin: "org.jetbrains.kotlin.jvm"
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    configurations {
+        doclava
+    }
+
+    dependencies {
+        doclava 'com.google.doclava:doclava:1.0.6'
+        doclava 'org.jetbrains:annotations:16.0.1'
+
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+        implementation 'org.jetbrains:annotations:16.0.1'
+        api "org.jetbrains.kotlin:kotlin-reflect:1.3.72"
+
+        testImplementation 'junit:junit:4.12'
+    }
+
+    def artifactName = rootProject.name == project.name ? "${project.name}" : "${rootProject.name}-${project.name}"
+
+    jar {
+        baseName = "$artifactName"
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        baseName = "${project.name}"
+        version = version
+        from javadoc.destinationDir
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        baseName = "${project.name}"
+        version = version
+
+        from sourceSets.main.allSource
+    }
+
+    assemble.dependsOn(sourcesJar, javadocJar)
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url 'https://repo.sultanofcardio.com/artifactory/sultanofcardio'
+        }
+        maven {url 'http://clojars.org/repo/'}
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name "sultanofcardio"
+                credentials {
+                    username "${sultanofcardioUser}"
+                    password "${sultanofcardioPassword}"
+                }
+                url "${sultanofcardioUrl}"
+            }
+
+            maven {
+                name "kiosk-mixed"
+                credentials {
+                    username "${kioskMixedUser}"
+                    password "${kioskMixedPassword}"
+                }
+                url "${kioskMixedUrl}"
+            }
+        }
+
+        publications {
+            binary(MavenPublication) {
+                artifactId "$artifactName"
+                version project.version
+                from components.java
+                artifact javadocJar
+                if(rootProject.name != project.name) {
+                    pom.withXml {
+                        def props = asNode().getByName('dependencies').get(0).appendNode('dependency')
+                        props.appendNode('groupId', group)
+                        props.appendNode('artifactId', rootProject.name)
+                        props.appendNode('version', rootProject.version)
+                        props.appendNode('scope', 'compile')
+                    }
+                }
+            }
+
+            snapshot(MavenPublication) {
+                artifactId "$artifactName"
+                version "${getVersion()}-SNAPSHOT"
+                from components.java
+                artifact javadocJar
+                if(rootProject.name != project.name) {
+                    pom.withXml {
+                        def props = asNode().getByName('dependencies').get(0).appendNode('dependency')
+                        props.appendNode('groupId', group)
+                        props.appendNode('artifactId', rootProject.name)
+                        props.appendNode('version', "${rootProject.version}-SNAPSHOT")
+                        props.appendNode('scope', 'compile')
+                    }
+                }
+            }
+        }
+    }
+
+    task generateJavadoc(type: Javadoc, dependsOn: project.configurations.doclava) {
+        failOnError = true
+        title = null
+        source = sourceSets.main.java.srcDirs
+        options.overview = "src/overview.html"
+        options.doclet = "com.google.doclava.Doclava"
+        options.docletpath = configurations.doclava.files as List
+        classpath += sourceSets.main.runtimeClasspath
+        destinationDir = file("build/docs/javadoc/${version}")
+    }
+
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = ["-Xjvm-default=compatibility"]
+        }
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+
+subprojects {
+    dependencies {
+        compileOnly project(':')
+        testImplementation project(':')
+    }
+}
+
+dependencies {
+    testImplementation project(":vendors:h2")
+}

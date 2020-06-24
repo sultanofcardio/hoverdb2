@@ -1,0 +1,8 @@
+version = rootProject.version
+
+dependencies {
+    api 'com.oracle.database.jdbc:ojdbc6:11.2.0.4'
+}
+
+publishing.publications.binary.version = "${version}"
+publishing.publications.snapshot.version = "${version}-SNAPSHOT"

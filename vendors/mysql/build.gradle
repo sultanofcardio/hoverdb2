@@ -1,0 +1,9 @@
+version = rootProject.version
+
+dependencies {
+    api 'mysql:mysql-connector-java:8.0.20'
+    testImplementation 'ch.vorburger.mariaDB4j:mariaDB4j:2.4.0'
+}
+
+publishing.publications.binary.version = "${version}"
+publishing.publications.snapshot.version = "${version}-SNAPSHOT"

@@ -1,0 +1,8 @@
+version = rootProject.version
+
+dependencies {
+    api 'org.xerial:sqlite-jdbc:3.27.2.1'
+}
+
+publishing.publications.binary.version = "${version}"
+publishing.publications.snapshot.version = "${version}-SNAPSHOT"
