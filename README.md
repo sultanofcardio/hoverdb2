@@ -72,7 +72,7 @@ You can perform normal CRUD operations with the database object
 ```kotlin
 h2.select("name")
     .from("my_table")
-    .where("id", 45)
+    .whereEquals("id", 45)
     .execute { resultSet ->
         prinln(resultSet.getString("name"))
     }
