@@ -56,7 +56,7 @@ open class PostgreSQL @JvmOverloads constructor(
                 }
             } else append("* ")
 
-            append("FROM ${select.tableName}")
+            append("FROM ${select.tableName} ")
 
             appendAllConditions(select)
 

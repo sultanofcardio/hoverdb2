@@ -29,12 +29,12 @@ Then add a dependency
 <dependency>
     <groupId>com.sultanofcardio</groupId>
         <artifactId>hoverdb2</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'com.sultanofcardio:hoverdb2:1.0.0'
+implementation 'com.sultanofcardio:hoverdb2:1.0.1'
 ``` 
 
 The core library doesn't provide any specific database support out of the box. Vendor database support can be found 
@@ -53,7 +53,7 @@ Vendor support packages have the same version as the core library and can be use
 you would just have:
 
 ```groovy
-implementation 'com.sultanofcardio:hoverdb2-h2:1.0.0'
+implementation 'com.sultanofcardio:hoverdb2-h2:1.0.1'
 ``` 
 
 ## Usage

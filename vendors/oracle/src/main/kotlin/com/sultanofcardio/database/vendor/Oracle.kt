@@ -61,7 +61,7 @@ open class Oracle @JvmOverloads constructor(
                 }
             } else append("* ")
 
-            append("FROM ${select.tableName}")
+            append("FROM ${select.tableName} ")
 
             if (select.limit != -1) {
                 select.where("ROWNUM <= ${select.limit}")

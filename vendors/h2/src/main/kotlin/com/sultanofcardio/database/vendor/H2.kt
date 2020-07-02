@@ -37,7 +37,7 @@ open class H2 @JvmOverloads constructor(val jdbcUrl: String, val properties: Pro
                 }
             } else append("* ")
 
-            append("FROM ${select.tableName}")
+            append("FROM ${select.tableName} ")
 
             appendAllConditions(select)
 

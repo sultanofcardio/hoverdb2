@@ -36,7 +36,7 @@ open class SQLite @JvmOverloads constructor(
                 }
             } else append("* ")
 
-            append("FROM ${select.tableName}")
+            append("FROM ${select.tableName} ")
 
             appendAllConditions(select)
 
