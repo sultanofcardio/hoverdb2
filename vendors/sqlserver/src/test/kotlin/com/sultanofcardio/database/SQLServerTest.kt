@@ -1,8 +1,7 @@
 package com.sultanofcardio.database
 
 import com.sultanofcardio.database.vendor.SQLServer
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.*
 import java.sql.ResultSet
 
 class SQLServerTest {
@@ -14,7 +13,7 @@ class SQLServerTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -29,17 +28,17 @@ class SQLServerTest {
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         sqlServerSelectTest()
     }
 
@@ -50,9 +49,9 @@ class SQLServerTest {
                 .whereEquals("id", 24)
                 .limit(1)
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
-        Assert.assertEquals("SELECT TOP 1 * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT TOP 1 * FROM SOME_TABLE WHERE id = 24", selectQuery)
+        assertEquals("SELECT TOP 1 * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT TOP 1 * FROM SOME_TABLE WHERE id = 24", selectQuery)
     }
 }

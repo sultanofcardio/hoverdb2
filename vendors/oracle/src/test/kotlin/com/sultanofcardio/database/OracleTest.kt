@@ -1,11 +1,13 @@
 package com.sultanofcardio.database
 
 import com.sultanofcardio.database.vendor.Oracle
-import org.junit.Assert
-import org.junit.Test
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 
 class OracleTest {
 
@@ -17,7 +19,7 @@ class OracleTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -33,17 +35,17 @@ class OracleTest {
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         oracleSelectTest()
     }
 
@@ -54,10 +56,10 @@ class OracleTest {
                 .whereEquals("id", 24)
                 .limit(1)
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1", selectQuery)
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1", selectQuery)
     }
 
     @Test
@@ -70,7 +72,7 @@ class OracleTest {
                 .value("column4", false)
                 .value("column5", Date())
         val selectQuery: String = insert.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
     }
 }

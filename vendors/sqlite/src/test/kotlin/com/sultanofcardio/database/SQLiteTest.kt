@@ -2,10 +2,9 @@ package com.sultanofcardio.database
 
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.vendor.SQLite
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import kotlin.test.*
 import java.io.File
 import java.sql.SQLException
 
@@ -17,7 +16,7 @@ class SQLiteTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id: Int = resultSet.getInt("id")
                         val words: String = resultSet.getString("words")
@@ -33,17 +32,17 @@ class SQLiteTest {
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         sqliteSelectTest()
     }
 
@@ -54,10 +53,10 @@ class SQLiteTest {
                 .whereEquals("id", 24)
                 .limit(1)
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1", selectQuery)
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24 AND ROWNUM <= 1", selectQuery)
     }
 
     companion object {
@@ -65,7 +64,7 @@ class SQLiteTest {
         private val sqlitedb = File("sqlitedb")
         private val database = SQLite(sqlitedb)
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             if(sqlitedb.exists()) sqlitedb.delete()
@@ -81,7 +80,7 @@ class SQLiteTest {
                     .run()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() {
             sqlitedb.delete()

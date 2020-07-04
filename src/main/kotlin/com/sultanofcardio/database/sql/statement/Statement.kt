@@ -21,7 +21,6 @@ abstract class Statement<T: Statement<T>> (var type: Type) {
     get() = if(field == null) throw RuntimeException("No table name specified") else field
     var whereConditions: MutableMap<String, Any> = mutableMapOf()
     var stringWhereConditions: MutableList<String> = mutableListOf()
-    var genericConditions: MutableList<String> = mutableListOf()
     var database: Database<*>? = null
         get() = if(field == null) throw DatabaseNotInitializedError() else field
 
@@ -92,17 +91,6 @@ abstract class Statement<T: Statement<T>> (var type: Type) {
 
     fun and(@Language("SQL") vararg condition: String): T {
         stringWhereConditions.addAll(condition)
-        return this as T
-    }
-
-    /**
-     * Add a generic SQL condition to this query. Don't use this for **WHERE**
-     * or **LIMIT**, use one of the convenience where methods or [Select.limit] instead
-     * @param condition The condition as SQL
-     * @return An instance of this query
-     */
-    fun condition(@Language("SQL") condition: String): T {
-        genericConditions.add(condition)
         return this as T
     }
 

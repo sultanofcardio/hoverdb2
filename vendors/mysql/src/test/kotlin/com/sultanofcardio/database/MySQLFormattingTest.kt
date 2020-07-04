@@ -5,8 +5,9 @@ import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.sql.statement.Update
 import com.sultanofcardio.database.vendor.MySQL
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class MySQLFormattingTest {
 
@@ -18,10 +19,10 @@ class MySQLFormattingTest {
                 .from("SOME_TABLE")
                 .whereEquals("id", 24)
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
     }
 
     @Test
@@ -30,7 +31,7 @@ class MySQLFormattingTest {
                 .from("SOME_TABLE")
                 .whereEquals("date", Literal("SYSDATE"))
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
     }
 
@@ -40,7 +41,7 @@ class MySQLFormattingTest {
                 .into("SOME_TABLE")
                 .value("date", Literal("SYSDATE"))
         val insertQuery: String = insert.toString()
-        Assert.assertNotNull(insertQuery)
+        assertNotNull(insertQuery)
         println(insertQuery)
     }
 
@@ -50,7 +51,7 @@ class MySQLFormattingTest {
                 .set("date", Literal("SYSDATE"))
                 .whereEquals("date", Literal("SYSDATE"))
         val updateQuery: String = update.toString()
-        Assert.assertNotNull(updateQuery)
+        assertNotNull(updateQuery)
         println(updateQuery)
     }
 
@@ -60,7 +61,7 @@ class MySQLFormattingTest {
                 .from("SOME_TABLE")
                 .whereEquals("date", Literal("SYSDATE"))
                 .toString()
-        Assert.assertNotNull(deleteQuery)
+        assertNotNull(deleteQuery)
         println(deleteQuery)
     }
 

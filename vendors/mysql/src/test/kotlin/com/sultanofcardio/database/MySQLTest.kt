@@ -6,10 +6,9 @@ import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.sql.statement.Update
 import com.sultanofcardio.database.vendor.MySQL
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import kotlin.test.*
 import java.sql.ResultSet
 import java.sql.SQLException
 
@@ -20,7 +19,7 @@ class MySQLTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -36,17 +35,17 @@ class MySQLTest {
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         mysqlSelectTest()
     }
 
@@ -56,10 +55,10 @@ class MySQLTest {
                 .from("SOME_TABLE")
                 .whereEquals("id", 24)
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
     }
 
     @Test
@@ -68,7 +67,7 @@ class MySQLTest {
                 .from("SOME_TABLE")
                 .whereEquals("date", Literal("SYSDATE"))
         val selectQuery: String = select.toString()
-        Assert.assertNotNull(selectQuery)
+        assertNotNull(selectQuery)
         println(selectQuery)
     }
 
@@ -78,7 +77,7 @@ class MySQLTest {
                 .into("SOME_TABLE")
                 .value("date", Literal("SYSDATE"))
         val insertQuery: String = insert.toString()
-        Assert.assertNotNull(insertQuery)
+        assertNotNull(insertQuery)
         println(insertQuery)
     }
 
@@ -88,7 +87,7 @@ class MySQLTest {
                 .set("date", Literal("SYSDATE"))
                 .whereEquals("date", Literal("SYSDATE"))
         val updateQuery: String = update.toString()
-        Assert.assertNotNull(updateQuery)
+        assertNotNull(updateQuery)
         println(updateQuery)
     }
 
@@ -98,7 +97,7 @@ class MySQLTest {
                 .from("SOME_TABLE")
                 .whereEquals("date", Literal("SYSDATE"))
                 .toString()
-        Assert.assertNotNull(deleteQuery)
+        assertNotNull(deleteQuery)
         println(deleteQuery)
     }
 
@@ -114,7 +113,7 @@ class MySQLTest {
         private var mysql: DB = DB.newEmbeddedDB(3340)
         private val database = MySQL("localhost", 3340, "db", "user", "")
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             mysql.start()
@@ -132,7 +131,7 @@ class MySQLTest {
                     .run()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() {
             mysql.stop()

@@ -1,14 +1,15 @@
 package com.sultanofcardio.database
 
 import com.sultanofcardio.database.vendor.H2
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.ResultSet
 
 class DatabaseTest {
 
     private val database = H2.Memory("DatabaseTest")
 
-    @Test fun executeStatement(){
+    @Test
+    fun executeStatement(){
         var result: ResultSet? = null
         database.execute("SELECT 'hello world' AS hw") { resultSet ->
             result = resultSet

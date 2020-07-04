@@ -1,10 +1,9 @@
 package com.sultanofcardio.database
 
 import com.sultanofcardio.database.vendor.H2
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import kotlin.test.*
 import java.sql.ResultSet
 
 class H2MemTest {
@@ -57,7 +56,7 @@ class H2MemTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -72,7 +71,7 @@ class H2MemTest {
         database.transaction {
             select().from("test_table")
                     .execute { resultSet: ResultSet ->
-                        Assert.assertNotNull(resultSet)
+                        assertNotNull(resultSet)
                         while (resultSet.next()) {
                             val id = resultSet.getInt("id")
                             val words = resultSet.getString("words")
@@ -88,17 +87,17 @@ class H2MemTest {
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
     }
 
     @Test
@@ -108,15 +107,15 @@ class H2MemTest {
                 .whereEquals("id", 24)
         val selectQuery = select.toString()
         println(selectQuery)
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
     }
 
     companion object {
 
         private val database = H2.Memory("h2db", properties("DB_CLOSE_DELAY" to -1))
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
 //            databaseServer = Server.createTcpServer("-tcpAllowOthers").start()
@@ -132,7 +131,7 @@ class H2MemTest {
                     .run()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() {
 //            databaseServer.stop()

@@ -35,24 +35,6 @@ fun StringBuilder.appendConditions(conditions: List<String>) {
     }
 }
 
-fun StringBuilder.appendGenericConditions(query: Statement<*>, appendWhere: Boolean) {
-    val genericConditions: List<String> = query.genericConditions
-    if (genericConditions.isNotEmpty()) {
-        if (appendWhere) append("WHERE ") else append("AND ")
-    }
-    for (i in genericConditions.indices) {
-        val condition = genericConditions[i]
-        if (i != 0) {
-            append("AND ")
-        }
-        if (i != genericConditions.size - 1) {
-            append(String.format("%s AND ", condition))
-        } else {
-            append(String.format("%s ", condition))
-        }
-    }
-}
-
 fun StringBuilder.appendAllConditions(s: Statement<*>) {
     var whereAppended = false
 
@@ -65,13 +47,10 @@ fun StringBuilder.appendAllConditions(s: Statement<*>) {
     if(s.stringWhereConditions.isNotEmpty()){
         if(!whereAppended) {
             append("WHERE ")
-            whereAppended = true
         } else append("AND ")
 
         appendConditions(s.stringWhereConditions)
     }
-
-    appendGenericConditions(s, !whereAppended)
 }
 
 fun properties(receiver: Properties.() -> Unit): Properties {

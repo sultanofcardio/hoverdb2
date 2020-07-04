@@ -1,13 +1,15 @@
 package com.sultanofcardio.database
 
 import com.sultanofcardio.database.vendor.H2
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import kotlin.test.Test
 import java.io.File
 import java.sql.ResultSet
 import java.sql.SQLException
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 
 class H2FileTest {
 
@@ -25,7 +27,7 @@ class H2FileTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -48,7 +50,7 @@ class H2FileTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -64,7 +66,7 @@ class H2FileTest {
         database.select()
                 .from("test_table")
                 .execute { resultSet: ResultSet ->
-                    Assert.assertNotNull(resultSet)
+                    assertNotNull(resultSet)
                     while (resultSet.next()) {
                         val id = resultSet.getInt("id")
                         val words = resultSet.getString("words")
@@ -80,17 +82,17 @@ class H2FileTest {
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
         result = database.insert()
                 .into("test_table")
                 .value("words", String.format("The time is now %s", System.currentTimeMillis()))
                 .run()
-        Assert.assertNotEquals(-1, result)
+        assertNotEquals(-1, result)
     }
 
     @Test
@@ -100,21 +102,21 @@ class H2FileTest {
                 .whereEquals("id", 24)
         val selectQuery = select.toString()
         println(selectQuery)
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
-        Assert.assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
+        assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
     }
 
     companion object {
 
         private val database = H2.File(File("h2db"))
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             database.run("CREATE TABLE test_table( id integer primary key auto_increment, words varchar);")
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() {
             database.run("DROP ALL OBJECTS;")
