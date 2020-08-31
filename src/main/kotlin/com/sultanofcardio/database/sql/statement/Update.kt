@@ -1,6 +1,5 @@
 package com.sultanofcardio.database.sql.statement
 
-import com.sultanofcardio.database.escape
 import org.intellij.lang.annotations.Language
 
 /**

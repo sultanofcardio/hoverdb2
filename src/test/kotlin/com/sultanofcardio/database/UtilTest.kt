@@ -6,25 +6,23 @@ import kotlin.test.*
 
 class UtilTest {
     @Test fun appendWhereConditions(){
-        val string = buildString {
-            appendConditions(mapOf(
-                    "id" to 1,
-                    "email" to "someone@example.com",
-                    "unusedField" to Literal("null")
-            ))
-        }
+        val select = Select()
+                .whereEquals("id", 1)
+                .andEquals("email", "someone@example.com")
+                .andEquals("unusedField", Literal("null"))
+
+        val string = buildString { appendWhereConditions(select) }
         assertEquals(" ", string.takeLast(1), "There should be a space at the end of the formatted conditions")
         assertEquals("id = 1 AND email = 'someone@example.com' AND unusedField = null ", string)
     }
 
     @Test fun appendStringWhereConditions(){
-        val string = buildString {
-            appendConditions(listOf(
-                    "id = 1",
-                    "email = 'someone@example.com'",
-                    "unusedField = null"
-            ))
-        }
+        val select = Select()
+                .where("id = 1")
+                .and("email = 'someone@example.com'")
+                .and("unusedField = null")
+
+        val string = buildString { appendStringWhereConditions(select) }
         assertEquals(" ", string.takeLast(1), "There should be a space at the end of the formatted conditions")
         assertEquals("id = 1 AND email = 'someone@example.com' AND unusedField = null ", string)
     }
@@ -40,6 +38,29 @@ class UtilTest {
             appendAllConditions(select)
         }
 
-        println(formatted)
+        assertEquals("WHERE id = 1 AND email = 'someone@example.com' AND unusedField = null AND someOtherField is not null ",
+        formatted)
+    }
+
+    @Test fun properties1(){
+        var props = properties { }
+        assertTrue(props.isEmpty)
+
+        props = properties {
+            put("hello", "world")
+        }
+
+        assertFalse(props.isEmpty)
+        assertEquals("world", props["hello"])
+    }
+
+    @Test fun properties2(){
+        var props = properties()
+        assertTrue(props.isEmpty)
+
+        props = properties("hello" to "world")
+
+        assertFalse(props.isEmpty)
+        assertEquals("world", props["hello"])
     }
 }

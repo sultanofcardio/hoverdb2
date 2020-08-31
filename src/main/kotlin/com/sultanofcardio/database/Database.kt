@@ -5,15 +5,42 @@ package com.sultanofcardio.database
 import com.sultanofcardio.database.interfaces.ConnectionHandler
 import com.sultanofcardio.database.interfaces.DatabaseHandler
 import com.sultanofcardio.database.interfaces.ResultSetHandler
+import com.sultanofcardio.database.sql.Literal
 import com.sultanofcardio.database.sql.statement.*
 import org.intellij.lang.annotations.Language
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.*
 
 interface Database<T: Database<T>> {
 
     val driverName: String
+
+    @JvmDefault val dateTimeFormat get() = "yyyy-MM-dd HH:mm:ss"
+    @JvmDefault val dateFormat get() = "yyyy-MM-dd"
+    @JvmDefault val timeFormat get() = "HH:mm:ss"
+
+    /**
+     * Escapes any &#39; characters in the string representation of the input
+     * @param value The input to be escaped
+     * @return The escaped value
+     */
+    @JvmDefault
+    fun Any?.escape(): String {
+        return when(this){
+            is Literal -> toString()
+            is Date -> formatDate(this)
+            is LocalDate -> formatDate(this)
+            is LocalTime -> formatDate(this)
+            is LocalDateTime -> formatDate(this)
+            is Calendar -> formatDate(this)
+            else -> toString().replace("'", "''")
+        }
+    }
 
     /**
      * Execute a raw SQL query that auto-closes its resources
@@ -116,6 +143,13 @@ interface Database<T: Database<T>> {
 
                     override fun formatDelete(delete: Delete): String = this@Database.formatDelete(delete)
 
+                    override fun formatDate(date: Date): String = this@Database.formatDate(date)
+
+                    override fun formatDate(date: LocalDate): String = this@Database.formatDate(date)
+
+                    override fun formatDate(date: LocalDateTime): String = this@Database.formatDate(date)
+
+                    override fun formatDate(date: LocalTime): String = this@Database.formatDate(date)
                 }
                 val r = consumer(t)
                 connection.commit()
@@ -248,4 +282,14 @@ interface Database<T: Database<T>> {
      * @return The formatted query
      */
     fun formatDelete(delete: Delete): String
+
+    fun formatDate(date: Date): String
+
+    fun formatDate(date: LocalDate): String
+
+    fun formatDate(date: LocalDateTime): String
+
+    fun formatDate(date: LocalTime): String
+
+    fun formatDate(date: Calendar): String = formatDate(date.time)
 }

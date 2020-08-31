@@ -1,7 +1,5 @@
 package com.sultanofcardio.database.sql.statement
 
-import com.sultanofcardio.database.escape
-
 /**
  * Class representing an instance of an SQL insert query
  */

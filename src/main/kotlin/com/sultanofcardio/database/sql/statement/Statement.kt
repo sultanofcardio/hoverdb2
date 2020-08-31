@@ -3,12 +3,13 @@
 package com.sultanofcardio.database.sql.statement
 
 import com.sultanofcardio.database.Database
-import com.sultanofcardio.database.escape
-import com.sultanofcardio.database.sql.Date
 import com.sultanofcardio.database.sql.Literal
 import org.intellij.lang.annotations.Language
 import java.sql.SQLException
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.*
 
 class DatabaseNotInitializedError: RuntimeException("No database has been set on this statement")
 
@@ -45,6 +46,30 @@ abstract class Statement<T: Statement<T>> (var type: Type) {
          */
         TCS
     }
+
+    /**
+     * Escapes any &#39; characters in the string representation of the input
+     * @param value The input to be escaped
+     * @return The escaped value
+     */
+    fun Any?.escape(): String {
+        return when(this){
+            is Literal -> toString()
+            is Date -> database!!.formatDate(this)
+            is LocalDate -> database!!.formatDate(this)
+            is LocalTime -> database!!.formatDate(this)
+            is LocalDateTime -> database!!.formatDate(this)
+            is Calendar -> database!!.formatDate(this)
+            else -> toString().replace("'", "''")
+        }
+    }
+
+    /**
+     * Escapes any &#39; characters in the string representation of the input
+     * @param value The input to be escaped
+     * @return The escaped value
+     */
+    fun escapeValue(value: Any?): String = value.escape()
 
     fun from(tableName: String): T {
         val name = tableName.escape()
