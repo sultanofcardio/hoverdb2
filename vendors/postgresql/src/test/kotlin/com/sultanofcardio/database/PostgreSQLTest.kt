@@ -2,13 +2,32 @@ package com.sultanofcardio.database
 
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.vendor.PostgreSQL
+import org.junit.jupiter.api.TestInstance
+import java.net.Socket
 import kotlin.test.*
 import java.sql.ResultSet
 import java.sql.SQLException
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PostgreSQLTest {
 
-    private val database = PostgreSQL("localhost", 3307, "oracledb", "user", "")
+    private val database = PostgreSQL("localhost", 5432, "postgres", "postgres",
+            "password")
+
+    init {
+        database.run("""
+            CREATE TABLE test_table(
+                id int,
+                words varchar
+            );
+        """.trimIndent())
+
+        database.run("""
+            CREATE TABLE some_table(
+                id int
+            );
+        """.trimIndent())
+    }
 
     @Test
     @Throws(SQLException::class)

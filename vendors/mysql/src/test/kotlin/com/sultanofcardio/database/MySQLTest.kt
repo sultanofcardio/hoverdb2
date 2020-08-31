@@ -111,13 +111,12 @@ class MySQLTest {
 
     companion object {
         private var mysql: DB = DB.newEmbeddedDB(3340)
-        private val database = MySQL("localhost", 3340, "db", "user", "")
+        private val database = MySQL("localhost", 3340, "test", "root", "")
 
         @BeforeAll
         @JvmStatic
         fun setup() {
             mysql.start()
-            mysql.createDB("db", "user", "")
             database.run("""
                 CREATE TABLE test_table ( 
                     id INT NOT NULL AUTO_INCREMENT, 
@@ -129,6 +128,7 @@ class MySQLTest {
                     .into("test_table")
                     .value("words", "The time is now ${System.currentTimeMillis()}")
                     .run()
+            Unit
         }
 
         @AfterAll

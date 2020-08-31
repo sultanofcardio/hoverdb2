@@ -8,9 +8,11 @@ buildscript {
 
 plugins {
     id "org.jetbrains.kotlin.jvm" version "$kotlin_version" apply false
+    id 'com.palantir.docker' version '0.25.0' apply false
+    id 'com.palantir.docker-run' version '0.25.0' apply false
 }
 
-version '1.0.1'
+version '1.0.2'
 
 allprojects {
 
@@ -19,6 +21,8 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'maven-publish'
     apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "com.palantir.docker"
+    apply plugin: "com.palantir.docker-run"
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -157,6 +161,14 @@ allprojects {
             includeEngines "junit-jupiter"
             excludeEngines "junit-vintage"
         }
+
+        if (project.hasProperty('excludeTests')) {
+            exclude project.property('excludeTests').toString()
+        }
+    }
+
+    tasks.withType(PublishToMavenRepository) {
+        dependsOn(test)
     }
 }
 

@@ -1,7 +1,50 @@
+import org.postgresql.Driver
+
+import java.sql.SQLException
+
 version = rootProject.version
+
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'postgresql:postgresql:9.1-901-1.jdbc4'
+    }
+}
 
 dependencies {
     api 'postgresql:postgresql:9.1-901-1.jdbc4'
+}
+
+dockerRun {
+    name 'hoverdb-postgres'
+    image 'postgres'
+    ports '5432:5432'
+    env 'POSTGRES_PASSWORD': 'password'
+    clean true
+}
+
+test {
+    doFirst {
+        def connected = false
+        def props = new Properties()
+        props.put("user", "postgres")
+        props.put("password", "password")
+        while(!connected) {
+            try {
+                new Driver().connect("jdbc:postgresql://localhost:5432/postgres", props).close()
+                connected = true
+            } catch(SQLException ignored){
+                sleep(100)
+            }
+        }
+    }
+
+    dependsOn('dockerRun')
+    finalizedBy('dockerStop')
 }
 
 publishing.publications.binary.version = "${version}"

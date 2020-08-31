@@ -5,13 +5,17 @@ package com.sultanofcardio.database.vendor
 import com.sultanofcardio.database.Database
 import com.sultanofcardio.database.appendAllConditions
 import com.sultanofcardio.database.derivesFrom
-import com.sultanofcardio.database.escape
 import com.sultanofcardio.database.sql.statement.Delete
 import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.sql.statement.Update
 import org.postgresql.Driver
 import java.sql.Connection
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 open class PostgreSQL @JvmOverloads constructor(
@@ -145,4 +149,12 @@ open class PostgreSQL @JvmOverloads constructor(
             appendAllConditions(delete)
         }.trim()
     }
+
+    override fun formatDate(date: Date): String = "TO_TIMESTAMP('${SimpleDateFormat(dateTimeFormat).format(date)}', 'YYYY-MM-DD HH24:MI:SS')"
+
+    override fun formatDate(date: LocalDate): String = "to_date('$date', 'YYYY-MM-DD')"
+
+    override fun formatDate(date: LocalDateTime): String = "TO_TIMESTAMP('${DateTimeFormatter.ofPattern(dateTimeFormat).format(date)}', 'YYYY-MM-DD HH24:MI:SS')"
+
+    override fun formatDate(date: LocalTime): String = "TO_TIMESTAMP('${DateTimeFormatter.ofPattern(timeFormat).format(date)}', 'HH24:MI:SS')"
 }

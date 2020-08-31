@@ -1,7 +1,50 @@
+import oracle.jdbc.driver.OracleDriver
+
+import java.sql.SQLException
+
 version = rootProject.version
+
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.oracle.database.jdbc:ojdbc6:11.2.0.4'
+    }
+}
 
 dependencies {
     api 'com.oracle.database.jdbc:ojdbc6:11.2.0.4'
+}
+
+dockerRun {
+    name 'hoverdb-oracle'
+    image 'store/oracle/database-enterprise:12.2.0.1-slim'
+    ports '1521:1521'
+    arguments '-d', '-it'
+}
+
+test {
+    doFirst {
+        def connected = false
+        def props = new Properties()
+        props.put("user", "sys as sysdba")
+        props.put("password", "Oradoc_db1")
+        while(!connected) {
+            try {
+                new OracleDriver().connect("jdbc:oracle:thin:@localhost:1521:ORCLCDB", props).close()
+                connected = true
+            } catch(SQLException ignored){
+                sleep(100)
+            }
+        }
+    }
+
+    dependsOn('dockerRun')
+    finalizedBy('dockerStop')
+
 }
 
 publishing.publications.binary.version = "${version}"

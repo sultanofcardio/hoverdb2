@@ -9,9 +9,13 @@ import com.sultanofcardio.database.Database
 import com.sultanofcardio.database.sql.statement.Delete
 import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
-import com.sultanofcardio.database.escape
 import com.sultanofcardio.database.sql.statement.Update
 import java.sql.Connection
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 open class SQLServer @JvmOverloads constructor(
@@ -142,4 +146,12 @@ open class SQLServer @JvmOverloads constructor(
             appendAllConditions(delete)
         }.trim()
     }
+
+    override fun formatDate(date: Date): String = "CONVERT(DATETIME, '${SimpleDateFormat(dateTimeFormat).format(date)}')"
+
+    override fun formatDate(date: LocalDate): String = "CONVERT(DATETIME, '$date')"
+
+    override fun formatDate(date: LocalDateTime): String = "CONVERT(DATETIME, '${DateTimeFormatter.ofPattern(dateTimeFormat).format(date)}')"
+
+    override fun formatDate(date: LocalTime): String = "CONVERT(TIME, '${DateTimeFormatter.ofPattern(timeFormat).format(date)}')"
 }

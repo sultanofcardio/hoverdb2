@@ -1,6 +1,7 @@
 package com.sultanofcardio.database
 
 import com.sultanofcardio.database.vendor.Oracle
+import org.junit.jupiter.api.TestInstance
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
@@ -9,23 +10,24 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OracleTest {
 
-    private val database = Oracle("localhost", 3307, "oracledb", "user", "")
+    private val database = Oracle("localhost", 1521, "ORCLCDB", "sys as sysdba", "Oradoc_db1")
 
-    @Test
-    @Throws(SQLException::class)
-    fun oracleSelectTest() {
-        database.select()
-                .from("test_table")
-                .execute { resultSet: ResultSet ->
-                    assertNotNull(resultSet)
-                    while (resultSet.next()) {
-                        val id = resultSet.getInt("id")
-                        val words = resultSet.getString("words")
-                        println(String.format("Row{id=%s, words=%s}", id, words))
-                    }
-                }
+    init {
+        database.run("""
+            CREATE TABLE test_table(
+                id INTEGER,
+                words VARCHAR2(100)
+            )
+        """.trimIndent())
+
+        database.run("""
+            CREATE TABLE some_table(
+                id INTEGER
+            )
+        """.trimIndent())
     }
 
     @Test
@@ -47,6 +49,20 @@ class OracleTest {
                 .run()
         assertNotEquals(-1, result)
         oracleSelectTest()
+    }
+
+    @Test
+    @Throws(SQLException::class)
+    fun oracleSelectTest() {
+        database.select()
+                .from("test_table")
+                .execute { resultSet: ResultSet ->
+                    while (resultSet.next()) {
+                        val id = resultSet.getInt("id")
+                        val words = resultSet.getString("words")
+                        println(String.format("Row{id=%s, words=%s}", id, words))
+                    }
+                }
     }
 
     @Test
@@ -72,7 +88,6 @@ class OracleTest {
                 .value("column4", false)
                 .value("column5", Date())
         val selectQuery: String = insert.toString()
-        assertNotNull(selectQuery)
         println(selectQuery)
     }
 }

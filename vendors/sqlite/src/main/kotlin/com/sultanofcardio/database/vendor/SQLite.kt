@@ -5,7 +5,6 @@ package com.sultanofcardio.database.vendor
 import com.sultanofcardio.database.Database
 import com.sultanofcardio.database.appendAllConditions
 import com.sultanofcardio.database.derivesFrom
-import com.sultanofcardio.database.escape
 import com.sultanofcardio.database.sql.statement.Delete
 import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
@@ -13,6 +12,11 @@ import com.sultanofcardio.database.sql.statement.Update
 import org.sqlite.JDBC
 import java.io.File
 import java.sql.Connection
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 open class SQLite @JvmOverloads constructor(
@@ -125,4 +129,12 @@ open class SQLite @JvmOverloads constructor(
             appendAllConditions(delete)
         }.trim()
     }
+
+    override fun formatDate(date: Date): String = SimpleDateFormat(dateTimeFormat).format(date)
+
+    override fun formatDate(date: LocalDate): String = date.toString()
+
+    override fun formatDate(date: LocalDateTime): String = DateTimeFormatter.ofPattern(dateTimeFormat).format(date)
+
+    override fun formatDate(date: LocalTime): String = DateTimeFormatter.ofPattern(timeFormat).format(date)
 }

@@ -5,17 +5,26 @@ package com.sultanofcardio.database.vendor
 import com.sultanofcardio.database.Database
 import com.sultanofcardio.database.appendAllConditions
 import com.sultanofcardio.database.derivesFrom
-import com.sultanofcardio.database.escape
 import com.sultanofcardio.database.sql.statement.Delete
 import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.sql.statement.Update
 import org.h2.Driver
 import java.sql.Connection
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 open class H2 @JvmOverloads constructor(val jdbcUrl: String, val properties: Properties = Properties()): Database<H2> {
     override val driverName = "org.h2.Driver"
+
+    class File @JvmOverloads constructor(val file: java.io.File, properties: Properties = Properties()): H2("jdbc:h2:file:${file.absolutePath}", properties)
+
+    @Suppress("CanBeParameter")
+    class Memory @JvmOverloads constructor(val name: String, properties: Properties = Properties()): H2("jdbc:h2:mem:$name;DB_CLOSE_DELAY=-1", properties)
 
     override fun getConnection(jdbcUrl: String): Connection {
         return try {
@@ -127,8 +136,11 @@ open class H2 @JvmOverloads constructor(val jdbcUrl: String, val properties: Pro
         }.trim()
     }
 
-    class File @JvmOverloads constructor(val file: java.io.File, properties: Properties = Properties()): H2("jdbc:h2:file:${file.absolutePath}", properties)
+    override fun formatDate(date: Date): String = "PARSEDATETIME('${SimpleDateFormat(dateTimeFormat).format(date)}', '$dateTimeFormat')"
 
-    @Suppress("CanBeParameter")
-    class Memory @JvmOverloads constructor(val name: String, properties: Properties = Properties()): H2("jdbc:h2:mem:$name;DB_CLOSE_DELAY=-1", properties)
+    override fun formatDate(date: LocalDate): String = "PARSEDATETIME('$date', '$dateFormat')"
+
+    override fun formatDate(date: LocalDateTime): String = "PARSEDATETIME('${DateTimeFormatter.ofPattern(dateTimeFormat).format(date)}', '$dateTimeFormat')"
+
+    override fun formatDate(date: LocalTime): String = "PARSEDATETIME('${DateTimeFormatter.ofPattern(timeFormat).format(date)}', '$timeFormat')"
 }

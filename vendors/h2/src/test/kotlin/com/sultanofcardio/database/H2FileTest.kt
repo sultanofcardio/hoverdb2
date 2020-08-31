@@ -3,13 +3,14 @@ package com.sultanofcardio.database
 import com.sultanofcardio.database.vendor.H2
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import kotlin.test.Test
 import java.io.File
 import java.sql.ResultSet
 import java.sql.SQLException
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.*
+import kotlin.test.*
 
 class H2FileTest {
 
@@ -104,6 +105,15 @@ class H2FileTest {
         println(selectQuery)
         assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24".length.toLong(), selectQuery.length.toLong())
         assertEquals("SELECT * FROM SOME_TABLE WHERE id = 24", selectQuery)
+    }
+
+    @Test
+    fun formatDate(){
+        assertTrue(Regex("PARSEDATETIME\\('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}', '${database.dateTimeFormat}'\\)").matches(database.formatDate(Date())))
+        assertTrue(Regex("PARSEDATETIME\\('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}', '${database.dateTimeFormat}'\\)").matches(database.formatDate(Calendar.getInstance())))
+        assertTrue(Regex("PARSEDATETIME\\('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}', '${database.dateTimeFormat}'\\)").matches(database.formatDate(LocalDateTime.now())))
+        assertTrue(Regex("PARSEDATETIME\\('[0-9]{4}-[0-9]{2}-[0-9]{2}', '${database.dateFormat}'\\)").matches(database.formatDate(LocalDate.now())))
+        assertTrue(Regex("PARSEDATETIME\\('[0-9]{2}:[0-9]{2}:[0-9]{2}', '${database.timeFormat}'\\)").matches(database.formatDate(LocalTime.now())))
     }
 
     companion object {

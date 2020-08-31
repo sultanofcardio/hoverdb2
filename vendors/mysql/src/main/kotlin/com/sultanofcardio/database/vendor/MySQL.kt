@@ -6,12 +6,16 @@ import com.mysql.cj.jdbc.Driver
 import com.sultanofcardio.database.Database
 import com.sultanofcardio.database.appendAllConditions
 import com.sultanofcardio.database.derivesFrom
-import com.sultanofcardio.database.escape
 import com.sultanofcardio.database.sql.statement.Delete
 import com.sultanofcardio.database.sql.statement.Insert
 import com.sultanofcardio.database.sql.statement.Select
 import com.sultanofcardio.database.sql.statement.Update
 import java.sql.Connection
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 open class MySQL @JvmOverloads constructor(
@@ -145,4 +149,12 @@ open class MySQL @JvmOverloads constructor(
             appendAllConditions(delete)
         }.trim()
     }
+
+    override fun formatDate(date: Date): String = "STR_TO_DATE('${SimpleDateFormat(dateTimeFormat).format(date)}', '%Y-%m-%d %H:%i:%s')"
+
+    override fun formatDate(date: LocalDate): String = "STR_TO_DATE('$date', '%Y-%m-%d')"
+
+    override fun formatDate(date: LocalDateTime): String = "STR_TO_DATE('${DateTimeFormatter.ofPattern(dateTimeFormat).format(date)}', '%Y-%m-%d %H:%i:%s')"
+
+    override fun formatDate(date: LocalTime): String = "STR_TO_DATE('${DateTimeFormatter.ofPattern(timeFormat).format(date)}', '%H:%i:%s')"
 }
